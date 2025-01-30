@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    JBoss, Home of Professional Open Source
+    Copyright 2015, Red Hat, Inc. and/or its affiliates, and individual
+    contributors by the @authors tag. See the copyright.txt in the
+    distribution for a full listing of individual contributors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    http://www.apache.org/licenses/LICENSE-2.0
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.wildfly.quickstarts</groupId>
+        <artifactId>wildfly-quickstart-parent</artifactId>
+        <!--
+        Maintain separation between the artifact id and the version to help prevent
+        merge conflicts between commits changing the GA and those changing the V.
+        -->
+        <version>8</version>
+        <relativePath/>
+    </parent>
+
+    <artifactId>todo-jakarta-data</artifactId>
+    <version>34.0.0.Beta1</version>
+    <packaging>war</packaging>
+    <name>Quickstart: todo-jakarta-data</name>
+    <description>This project demonstrates how to implement a Jakarta Data application to manage ToDos</description>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <properties>
+        <!-- the version for the Server -->
+        <version.server>34.0.0.Beta1</version.server>
+        <!-- The versions for BOMs, Packs and Plugins -->
+        <version.bom.ee>${version.server}</version.bom.ee>
+        <version.plugin.wildfly>5.0.0.Final</version.plugin.wildfly>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- importing the ee-with-tools BOM adds specs and other useful artifacts as managed dependencies -->
+            <dependency>
+                <groupId>org.wildfly.bom</groupId>
+                <artifactId>wildfly-ee-preview-with-tools</artifactId>
+                <version>${version.bom.ee}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.wildfly.plugins</groupId>
+                    <artifactId>wildfly-maven-plugin</artifactId>
+                    <version>${version.plugin.wildfly}</version>
+                    <configuration>
+                        <!-- properties needed by the maven plugin to connect to postgres when starting the server, we define them here delegating the values, to same name properties received by "mvn" environment passed from comand line -->
+                        <env>
+                            <POSTGRESQL_DATABASE>${POSTGRESQL_DATABASE}</POSTGRESQL_DATABASE>
+                            <POSTGRESQL_SERVICE_HOST>${POSTGRESQL_SERVICE_HOST}</POSTGRESQL_SERVICE_HOST>
+                            <POSTGRESQL_SERVICE_PORT>${POSTGRESQL_SERVICE_PORT}</POSTGRESQL_SERVICE_PORT>
+                            <POSTGRESQL_USER>${POSTGRESQL_USER}</POSTGRESQL_USER>
+                            <POSTGRESQL_PASSWORD>${POSTGRESQL_PASSWORD}</POSTGRESQL_PASSWORD>
+                            <POSTGRESQL_DATASOURCE>${POSTGRESQL_DATASOURCE}</POSTGRESQL_DATASOURCE>
+                        </env>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.hibernate.orm</groupId>
+                                <artifactId>hibernate-jpamodelgen</artifactId>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.enterprise</groupId>
+            <artifactId>jakarta.enterprise.cdi-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.data</groupId>
+            <artifactId>jakarta.data-api</artifactId>
+            <!-- TODO take it from the bom once 34 Final is released -->
+            <version>1.0.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ejb</groupId>
+            <artifactId>jakarta.ejb-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson2-provider</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <version>5.10.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.logging</groupId>
+            <artifactId>commons-logging-jboss-logging</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>provisioned-server</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <configuration>
+                            <!-- Disable Glow for now; just directly specify the layers -->
+                            <!--<discover-provisioning-info>
+                                <version>${version.server}</version>
+                                <add-ons>
+                                    <add-on>postgresql</add-on>
+                                </add-ons>
+                            </discover-provisioning-info>-->
+                            <feature-packs>
+                                <feature-pack>
+                                    <location>wildfly-preview@maven(org.jboss.universe:community-universe)#34.0.0.Beta1</location>
+                                </feature-pack>
+                                <feature-pack>
+                                    <groupId>org.wildfly</groupId>
+                                    <artifactId>wildfly-datasources-preview-galleon-pack</artifactId>
+                                    <version>8.0.1.Final</version>
+                                </feature-pack>
+                            </feature-packs>
+                            <layers>
+                                <layer>jaxrs-server</layer>
+                                <layer>jakarta-data</layer>
+                                <layer>postgresql-datasource</layer>
+                            </layers>
+                            <!--
+                                Rename the output war to ROOT.war before adding it to the server, so that the
+                                application is deployed in the root web context.
+                            -->
+                            <name>ROOT.war</name>
+                            <packaging-scripts>
+                                <packaging-script>
+                                    <scripts>
+                                        <script>${project.build.scriptSourceDirectory}/cors_filters.cli</script>
+                                    </scripts>
+                                    <!-- Expressions resolved during server execution -->
+                                    <resolve-expressions>false</resolve-expressions>
+                                </packaging-script>
+                            </packaging-scripts>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>package</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>openshift</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.wildfly.plugins</groupId>
+                        <artifactId>wildfly-maven-plugin</artifactId>
+                        <configuration>
+                            <discover-provisioning-info>
+                                <version>${version.server}</version>
+                                <context>cloud</context>
+                                <add-ons>
+                                    <add-on>postgresql</add-on>
+                                </add-ons>
+                            </discover-provisioning-info>
+                            <!--
+                                The parent POM's 'openshift' profile renames the output archive to ROOT.war so that the
+                                application is deployed in the root web context. Add ROOT.war to the server.
+                            -->
+                            <filename>ROOT.war</filename>
+                            <packaging-scripts>
+                                <packaging-script>
+                                    <scripts>
+                                        <script>${project.build.scriptSourceDirectory}/cors_filters.cli</script>
+                                    </scripts>
+                                    <!-- Expressions resolved during server execution -->
+                                    <resolve-expressions>false</resolve-expressions>
+                                </packaging-script>
+                            </packaging-scripts>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>package</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>integration-testing</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <repositories>
+        <repository>
+            <id>jboss-public-maven-repository</id>
+            <name>JBoss Public Maven Repository</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>never</updatePolicy>
+            </snapshots>
+            <layout>default</layout>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>jboss-public-maven-repository</id>
+            <name>JBoss Public Maven Repository</name>
+            <url>https://repository.jboss.org/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+</project>
