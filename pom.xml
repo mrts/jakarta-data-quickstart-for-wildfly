@@ -30,7 +30,7 @@
     </parent>
 
     <artifactId>todo-jakarta-data</artifactId>
-    <version>34.0.0.Beta1</version>
+    <version>1.0.0</version>
     <packaging>war</packaging>
     <name>Quickstart: todo-jakarta-data</name>
     <description>This project demonstrates how to implement a Jakarta Data application to manage ToDos</description>
@@ -45,7 +45,7 @@
 
     <properties>
         <!-- the version for the Server -->
-        <version.server>34.0.0.Beta1</version.server>
+        <version.server>35.0.0.Final</version.server>
         <!-- The versions for BOMs, Packs and Plugins -->
         <version.bom.ee>${version.server}</version.bom.ee>
         <version.plugin.wildfly>5.0.0.Final</version.plugin.wildfly>
@@ -107,8 +107,6 @@
         <dependency>
             <groupId>jakarta.data</groupId>
             <artifactId>jakarta.data-api</artifactId>
-            <!-- TODO take it from the bom once 34 Final is released -->
-            <version>1.0.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -163,16 +161,9 @@
                         <groupId>org.wildfly.plugins</groupId>
                         <artifactId>wildfly-maven-plugin</artifactId>
                         <configuration>
-                            <!-- Disable Glow for now; just directly specify the layers -->
-                            <!--<discover-provisioning-info>
-                                <version>${version.server}</version>
-                                <add-ons>
-                                    <add-on>postgresql</add-on>
-                                </add-ons>
-                            </discover-provisioning-info>-->
                             <feature-packs>
                                 <feature-pack>
-                                    <location>wildfly-preview@maven(org.jboss.universe:community-universe)#34.0.0.Beta1</location>
+                                    <location>wildfly-preview@maven(org.jboss.universe:community-universe)#${version.server}</location>
                                 </feature-pack>
                                 <feature-pack>
                                     <groupId>org.wildfly</groupId>
@@ -190,47 +181,6 @@
                                 application is deployed in the root web context.
                             -->
                             <name>ROOT.war</name>
-                            <packaging-scripts>
-                                <packaging-script>
-                                    <scripts>
-                                        <script>${project.build.scriptSourceDirectory}/cors_filters.cli</script>
-                                    </scripts>
-                                    <!-- Expressions resolved during server execution -->
-                                    <resolve-expressions>false</resolve-expressions>
-                                </packaging-script>
-                            </packaging-scripts>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>package</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>openshift</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.wildfly.plugins</groupId>
-                        <artifactId>wildfly-maven-plugin</artifactId>
-                        <configuration>
-                            <discover-provisioning-info>
-                                <version>${version.server}</version>
-                                <context>cloud</context>
-                                <add-ons>
-                                    <add-on>postgresql</add-on>
-                                </add-ons>
-                            </discover-provisioning-info>
-                            <!--
-                                The parent POM's 'openshift' profile renames the output archive to ROOT.war so that the
-                                application is deployed in the root web context. Add ROOT.war to the server.
-                            -->
-                            <filename>ROOT.war</filename>
                             <packaging-scripts>
                                 <packaging-script>
                                     <scripts>

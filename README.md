@@ -10,8 +10,7 @@ quickstart by replacing Jakarta Persistence with Jakarta Data.
 The quickstart was initially created by [Brian Stansberry](https://github.com/bstansberry).
 You can find his original code [here](https://github.com/bstansberry/quickstart/tree/jakarta_data/todo-jakarta-data).
 
-You can read more about Jakarta Data support in the WildFly in [this blog
-post](https://www.wildfly.org/news/2024/10/10/jakarta-data/).
+You can read more about Jakarta Data support in WildFly in [this blog post](https://www.wildfly.org/news/2024/10/10/jakarta-data/).
 
 ## Building, running and testing locally
 
