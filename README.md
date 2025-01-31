@@ -22,7 +22,7 @@ mvn clean package -Pprovisioned-server
 ```
 2. Run a local PostgreSQL database with Docker:
 ```sh
-docker run --name todo-backend-db \
+docker run --rm --name todo-backend-db \
     -e POSTGRES_USER=todos \
     -e POSTGRES_PASSWORD=mysecretpassword \
     -p 5432:5432 postgres
